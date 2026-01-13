@@ -1,0 +1,145 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct nodetype
+{
+    int key;
+    struct nodetype *next, *first, *last;
+}NodeT;
+
+NodeT* search(NodeT* first, int givenKey)
+{
+    NodeT* p=first;
+    while(p!=NULL)
+    {
+        if(p->key==givenKey)
+        {
+            return p;
+        }
+        p=p->next;
+    }
+    return NULL;
+}
+
+void insert_first(NodeT** first, NodeT** last, int givenKey)
+{
+    NodeT* p=(NodeT*)malloc(sizeof(NodeT));
+    p->key=givenKey;
+    p->next=NULL;
+    if ( *first == NULL )
+        {
+            *first = p;
+            *last = p;
+        }
+        else
+        {
+            p->next=*first;
+            *first=p;
+        }
+}
+
+void insert_last(NodeT** first, NodeT** last, int givenKey)
+{
+    NodeT* p=(NodeT*)malloc(sizeof(NodeT));
+    p->key=givenKey;
+    p->next=NULL;
+    if(*first==NULL)
+    {
+        *first=p;
+        *last=p;
+    }
+    else
+    {
+        (*last)->next=p;
+        *last=p;
+    }
+}
+
+void delete_first(NodeT** first, NodeT** last)
+{
+    NodeT *p;
+    if (*first != NULL)
+    {
+        p = *first;
+        *first = (*first)->next;
+        free(p);
+        if (*first == NULL)
+        {
+            *last = NULL;
+        }
+    }
+}
+void delete_key(NodeT** first, NodeT** last, int givenKey)
+{
+    NodeT *q = *first;
+    NodeT *q1 = NULL;
+    while (q != NULL)
+    {
+        if (q->key == givenKey)
+        {
+            break;
+        }
+        q1=q;
+        q=q->next;
+    }
+    if (q != NULL)
+    {
+        if (q == *first)
+        {
+            *first = (*first)->next;
+            if (*first == NULL)
+                *last = NULL;
+        }
+        else
+        {
+            q1->next=q->next;
+             if (q == *last)
+                *last = q1;
+        }
+
+        free(q);
+    }
+}
+
+
+void print_list(NodeT* first) {
+    NodeT* p = first;
+    printf("Lista: ");
+    while (p != NULL) {
+        printf("%d -> ", p->key);
+        p = p->next;
+    }
+    printf("NULL\n");
+}
+
+int main()
+{
+    NodeT *first = NULL;
+    NodeT *last = NULL;
+    printf("1. Inseram 10, 20, 30 la inceput:\n");
+    insert_first(&first, &last, 10); 
+    insert_first(&first, &last, 20);
+    insert_first(&first, &last, 30);
+    print_list(first);
+    printf("\n2. Inseram 99 la sfarsit:\n");
+    insert_last(&first, &last, 99);
+    print_list(first);
+    printf("\n3. Cautam valoarea 20:\n");
+    NodeT* gasit = search(first, 20); 
+    if (gasit != NULL)
+        printf("Gasit: %d\n", gasit->key);
+    else
+        printf("Nu s-a gasit.\n");
+    printf("\n4. Stergem primul element (30):\n");
+    delete_first(&first, &last);
+    print_list(first);
+    printf("\n5. Stergem elementul din mijloc (10):\n");
+    delete_key(&first, &last, 10);
+    print_list(first);
+    printf("\n6. Stergem tot restul:\n");
+    delete_first(&first, &last); 
+    delete_first(&first, &last); 
+    print_list(first);
+
+    return 0;
+}
